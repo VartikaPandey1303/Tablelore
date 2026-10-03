@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>TableLore Mobile Prototype</title>
+<style>
+:root{
+  --bg:#f8f4ee; --paper:#fffdfa; --ink:#2b211c; --muted:#75685f; --line:#e7ddd2;
+  --accent:#9a4f3f; --accent2:#365c4a; --soft:#f1e7df; --green:#2f7d4a; --red:#b44646;
+  --shadow:0 8px 24px rgba(69,48,36,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#efe9e2;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.phone{
+  width:min(100%,430px);
+  min-height:100vh;
+  margin:0 auto;
+  background:var(--bg);
+  position:relative;
+  box-shadow:0 0 50px rgba(50,35,25,.10);
+}
+.screen{min-height:100vh;padding-bottom:84px}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  background:rgba(255,253,250,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)
+}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800}
+.logo{width:34px;height:34px;border-radius:11px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800}
+.iconbtn{border:1px solid var(--line);background:white;border-radius:12px;padding:8px 10px}
+.content{padding:16px}
+h1,h2,h3{font-family:Georgia,serif}
+h1{font-size:30px;margin:0}
+h2{font-size:24px}
+h3{font-size:18px}
+.sub{font-size:12px;color:var(--muted);line-height:1.5}
+.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:750}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.green{background:var(--accent2);color:#fff}
+.btn.secondary{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:#fff2f2;border:1px solid #efc5c5;color:var(--red)}
+.full{width:100%}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px}
+.cardbody{padding:14px}
+.photo{height:210px;background-size:cover;background-position:center;position:relative}
+.chip{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.95);padding:6px 9px;border-radius:999px;font-size:10px;font-weight:750}
+.meta{font-size:11px;color:var(--muted);line-height:1.55}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:10px;background:var(--soft);padding:5px 8px;border-radius:999px}
+.price{font-weight:800;margin-top:9px}
+.filters{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin:14px 0}
+.filters::-webkit-scrollbar{display:none}
+.filterbtn,.filters select{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 11px;font-size:11px}
+.bottomnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:min(100%,430px);z-index:40;
+  display:flex;justify-content:space-around;gap:4px;
+  background:rgba(255,253,250,.98);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);padding:8px 5px max(8px,env(safe-area-inset-bottom))
+}
+.bottomnav button{flex:1;border:0;background:transparent;padding:6px 2px;color:#75685f;font-size:9px}
+.bottomnav button .navico{display:block;font-size:18px;margin-bottom:2px}
+.bottomnav button.active{color:var(--accent);font-weight:800}
+.field{margin-top:12px}
+.field label{display:block;font-size:11px;font-weight:750;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:white;padding:11px}
+.notice{background:#f4ece5;border:1px solid var(--line);border-radius:13px;padding:11px;font-size:11px;line-height:1.45}
+.success{background:#ecf6ef;border-color:#cde5d3;color:#276b3e}
+.warn{background:#fff7e8;border-color:#efdfb6}
+.row{display:flex;gap:11px;align-items:center}
+.avatar{width:46px;height:46px;border-radius:50%;background:#ead9d0;display:grid;place-items:center;font-weight:800;overflow:hidden;flex:0 0 auto}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.grow{flex:1}
+.verify{color:var(--green);font-size:10px;font-weight:800}
+.list{display:flex;flex-direction:column;gap:9px}
+.item{border:1px solid var(--line);background:white;border-radius:14px;padding:11px}
+.item.rowitem{display:flex;gap:10px;align-items:center}
+.status{display:inline-block;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:750}
+.status.ok{background:#e7f5ea;color:#287241}
+.status.pending{background:#fff2d9;color:#936515}
+.status.bad{background:#fbe7e7;color:#a13a3a}
+.tabs{display:flex;gap:7px;overflow:auto;margin:14px 0 12px}
+.tabs button{border:1px solid var(--line);background:white;border-radius:999px;padding:8px 11px;white-space:nowrap;font-size:11px}
+.tabs button.active{background:var(--soft);color:var(--accent);border-color:#d4b8aa;font-weight:800}
+.profilehero{background:linear-gradient(135deg,#fffdfa,#f2e8df);border:1px solid var(--line);border-radius:18px;padding:16px}
+.hosttile{background:white;border:1px solid var(--line);border-radius:16px;padding:13px;box-shadow:var(--shadow)}
+.hosttile.clickable{cursor:pointer}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actiontile{border:1px solid var(--line);background:white;border-radius:16px;padding:14px}
+.actiontile b{font-size:24px;display:block}
+.actiontile span{font-size:11px}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dish{border:1px solid var(--line);border-radius:12px;padding:10px;background:white}
+.dish b{font-size:12px;display:block}
+.dish span{font-size:10px;color:var(--muted)}
+.trustrow{display:flex;gap:10px;overflow:auto;padding:2px 0}
+.trust{white-space:nowrap;font-size:10px;background:#f2ece6;padding:7px 9px;border-radius:999px}
+.modal{position:fixed;inset:0;background:rgba(34,25,20,.48);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheet{width:min(100%,430px);max-height:88vh;overflow:auto;background:white;border-radius:22px 22px 0 0;padding:18px 16px 24px}
+.sheet h2{margin-top:0}
+.community{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;align-items:center;justify-content:center;padding:18px}
+.community.show{display:flex}
+.community-card{width:min(100%,430px);background:white;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow)}
+.guideline{display:flex;gap:11px;margin:13px 0}
+.gico{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--soft);flex:0 0 auto}
+.login{min-height:100vh;display:flex;flex-direction:column}
+.loginHero{height:42vh;background:linear-gradient(rgba(30,20,15,.25),rgba(30,20,15,.45)),url('https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1000&q=85') center/cover;color:white;padding:28px 20px;display:flex;align-items:flex-end}
+.loginHero h1{font-size:44px;line-height:1.02}
+.loginBox{padding:22px 18px 34px;background:#fffaf6;flex:1}
+.mapbox{height:280px;border:1px solid var(--line);border-radius:16px;background:
+radial-gradient(circle at 20% 25%,#ead6c8 0 6px,transparent 7px),
+radial-gradient(circle at 65% 40%,#d8c2b3 0 6px,transparent 7px),
+radial-gradient(circle at 45% 70%,#cdb7aa 0 6px,transparent 7px),
+linear-gradient(135deg,#f7eee8,#fffdfa);
+position:relative;overflow:hidden}
+.mapbox:before,.mapbox:after{content:"";position:absolute;background:#e6d9cf}
+.mapbox:before{width:130%;height:9px;left:-10%;top:45%;transform:rotate(-18deg)}
+.mapbox:after{height:130%;width:8px;left:52%;top:-15%;transform:rotate(15deg)}
+.maplabel{position:absolute;z-index:2;border:1px solid #d7c4b8;background:white;border-radius:999px;padding:7px 9px;font-size:10px}
+.maplabel.active{background:var(--accent);color:white}
+.rating-summary{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px}
+.rating-big{font-size:32px;font-weight:800}
+.distribution{flex:1;display:grid;gap:4px}
+.barrow{display:grid;grid-template-columns:18px 1fr 20px;gap:5px;align-items:center;font-size:9px;color:var(--muted)}
+.bar{height:5px;background:#eee5de;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent)}
+.uploadbox{height:180px;border:1px dashed #cdb9aa;border-radius:14px;background:#faf6f2 center/cover no-repeat;display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.backbtn{border:0;background:transparent;font-size:20px;padding:2px}
+.otpDigit{width:100%;aspect-ratio:1/1;border:1px solid var(--line);border-radius:12px;background:white;text-align:center;font-size:22px;font-weight:800;outline:none}
+.otpDigit:focus{border-color:var(--accent)}
+.linklike{border:0;background:transparent;color:var(--accent);font-weight:800;padding:0}
+.hr{height:1px;background:var(--line);margin:16px 0}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div id="loginScreen" class="login">
+    <div class="loginHero">
+      <div>
+        <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px">TableLore</div>
+        <h1>Find tables.<br>Meet people.</h1>
+      </div>
+    </div>
+    <div class="loginBox">
+      <h2 style="margin:0">Log in or sign up</h2>
+      <p class="sub">Continue using your email address or mobile number.</p>
+      <div class="tabs">
+        <button id="loginEmailTab" class="active" onclick="setLoginMethod('email')">Email</button>
+        <button id="loginPhoneTab" onclick="setLoginMethod('phone')">Phone</button>
+      </div>
+      <div id="loginEmailWrap" class="field">
+        <label>Email address</label>
+        <input id="loginEmail" type="email" value="vartika@example.com"/>
+      </div>
+      <div id="loginPhoneWrap" class="field hidden">
+        <label>Mobile number</label>
+        <div style="display:grid;grid-template-columns:88px 1fr;gap:8px">
+          <select><option>+91</option><option>+1</option><option>+44</option></select>
+          <input id="loginPhone" type="tel" value="9876543210"/>
+        </div>
+        <div class="sub" style="margin-top:5px">We'll send a one-time code.</div>
+      </div>
+      <button class="btn primary full" style="margin-top:16px" onclick="login()">Continue</button>
+      <div class="hr"></div>
+      <div class="sub">One account for dining and hosting. Become a host later from Profile.</div>
+    </div>
+  </div>
+
+  <div id="otpScreen" class="login hidden">
+    <div class="loginHero" style="height:28vh">
+      <div>
+        <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px">TableLore</div>
+        <h1 style="font-size:36px">Verify your<br>login.</h1>
+      </div>
+    </div>
+    <div class="loginBox">
+      <button class="backbtn" onclick="backToLogin()">←</button>
+      <h2 style="margin:8px 0 4px">Enter OTP</h2>
+      <p id="otpDestination" class="sub">We sent a 6-digit code.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-top:18px">
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,0)"/>
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,1)"/>
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,2)"/>
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,3)"/>
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,4)"/>
+        <input class="otpDigit" inputmode="numeric" maxlength="1" oninput="moveOtp(this,5)"/>
+      </div>
+
+      <button class="btn primary full" style="margin-top:18px" onclick="verifyOtp()">Verify & Continue</button>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <button id="resendOtpBtn" class="linklike" onclick="resendOtp()">Resend OTP</button>
+        <span id="otpTimer" class="sub">00:30</span>
+      </div>
+
+      <div class="notice" style="margin-top:16px">
+        <b>Prototype OTP:</b> enter <b>123456</b>.
+      </div>
+    </div>
+  </div>
+
+  <div id="communityScreen" class="community">
+    <div class="community-card">
+      <div class="sub" style="text-transform:uppercase;letter-spacing:.1em">Before you continue</div>
+      <h2>Community guidelines</h2>
+      <div class="guideline"><div class="gico">♡</div><div><b>Be respectful</b><div class="sub">No abusive, discriminatory, threatening or harassing behaviour.</div></div></div>
+      <div class="guideline"><div class="gico">⌂</div><div><b>Respect the home</b><div class="sub">Follow house rules and treat the host's space with care.</div></div></div>
+      <div class="guideline"><div class="gico">✓</div><div><b>Be honest</b><div class="sub">Use accurate profile details and disclose dietary needs truthfully.</div></div></div>
+      <div class="guideline"><div class="gico">⚑</div><div><b>Report concerns</b><div class="sub">Use Help / SOS for platform or safety concerns.</div></div></div>
+      <label style="display:flex;gap:8px;font-size:11px;line-height:1.4;margin:16px 0"><input id="termsCheck" type="checkbox"> I agree to the community guidelines.</label>
+      <button class="btn primary full" onclick="acceptTerms()">Continue</button>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="topbar">
+      <div class="brand"><div class="logo">T</div><span>TableLore</span></div>
+      <button class="iconbtn" onclick="showPage('profile')">Profile</button>
+    </div>
+
+    <div id="page-discover" class="screen page hidden">
+      <div class="content">
+        <h1>Discover</h1>
+        <div class="sub">Find home-dining experiences that fit your preferences.</div>
+        <div class="filters">
+          <select id="fCuisine" onchange="renderExperiences()"><option value="">Cuisine</option><option>Andhra</option><option>Bengali</option><option>Italian</option></select>
+          <button class="filterbtn" onclick="openModal('regionModal')">📍 <span id="regionText">Region</span></button>
+          <select id="fGroup" onchange="renderExperiences()"><option value="">Group size</option><option>3–4 guests</option><option>5–6 guests</option><option>7–8 guests</option></select>
+          <select id="fPrice" onchange="renderExperiences()"><option value="">Price</option><option>Under ₹1,200</option><option>₹1,200–₹1,500</option><option>Above ₹1,500</option></select>
+        </div>
+        <div id="experienceList"></div>
+      </div>
+    </div>
+
+    <div id="page-experience" class="screen page hidden">
+      <div class="content">
+        <button class="backbtn" onclick="showPage('discover')">←</button>
+        <div class="card" style="margin-top:8px">
+          <div id="expPhoto" class="photo" style="height:260px"></div>
+          <div class="cardbody">
+            <h2 id="expTitle" style="margin:0"></h2>
+            <div id="expMeta" class="meta"></div>
+            <div id="expPrice" class="price"></div>
+            <div class="section">
+              <h3>About</h3>
+              <div id="expDesc" class="sub"></div>
+            </div>
+            <div class="section">
+              <h3>Menu</h3>
+              <div id="menuGrid" class="menu-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hosttile clickable" onclick="openHostReviews()">
+          <div class="row">
+            <div class="avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80"/></div>
+            <div class="grow">
+              <b>Priya S.</b>
+              <div class="verify">✓ Verified host</div>
+              <div class="sub">12 hosted experiences</div>
+            </div>
+            <div style="font-size:11px;font-weight:800">★ 4.8 (18)</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="cardbody">
+            <h3 style="margin-top:0">Who's joining</h3>
+            <div class="sub">Limited profile context about confirmed guests.</div>
+            <div id="attendeeList" class="list" style="margin-top:10px"></div>
+          </div>
+        </div>
+
+        <div class="trustrow">
+          <div class="trust">✓ Verified host</div>
+          <div class="trust">⌂ Address after approval</div>
+          <div class="trust">♡ Host approves guests</div>
+        </div>
+        <button class="btn primary full" style="margin-top:14px" onclick="openRequest()">Request a Seat</button>
+      </div>
+    </div>
+
+    <div id="page-dining" class="screen page hidden">
+      <div class="content">
+        <h1>My Dining</h1>
+        <div class="sub">Track upcoming requests and revisit past tables.</div>
+        <div class="tabs">
+          <button id="diningUpcomingTab" class="active" onclick="setDiningTab('upcoming')">Upcoming</button>
+          <button id="diningPastTab" onclick="setDiningTab('past')">Past</button>
+        </div>
+        <div id="diningContent"></div>
+        <button class="btn secondary full" style="margin-top:14px" onclick="showPage('discover')">Discover more experiences</button>
+      </div>
+    </div>
+
+    <div id="page-profile" class="screen page hidden">
+      <div class="content">
+        <h1>Profile</h1>
+        <div class="profilehero" style="margin-top:14px">
+          <div class="row">
+            <div class="avatar" style="width:64px;height:64px;font-size:20px">VP</div>
+            <div>
+              <b style="font-size:18px">Vartika P.</b>
+              <div class="sub">Bengaluru</div>
+              <div id="verifyBadge" style="margin-top:5px"></div>
+            </div>
+          </div>
+          <div id="hostEnableBox" style="margin-top:14px"></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="cardbody">
+            <h3 style="margin-top:0">Profile settings</h3>
+            <div class="field"><label>Display name</label><input id="pName" value="Vartika P."/></div>
+            <div class="field"><label>City</label><input id="pCity" value="Bengaluru"/></div>
+            <div class="field"><label>Dietary preference</label><select id="pDiet"><option>Vegetarian</option><option>No restrictions</option><option>Vegan</option><option>Jain</option></select></div>
+            <div class="field"><label>Budget preference</label><select id="pBudget"><option>Under ₹1,200</option><option>₹1,200–₹1,500</option><option>Above ₹1,500</option></select></div>
+            <div class="field"><label>Allergies</label><input id="pAllergies" value="Peanuts"/></div>
+            <div class="field"><label>Short introduction</label><textarea id="pIntro" rows="3">Curious about regional food and small-group experiences.</textarea></div>
+            <button class="btn primary full" style="margin-top:12px" onclick="saveProfile()">Save Changes</button>
+            <div id="profileSaved" class="sub" style="text-align:center;margin-top:6px"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardbody">
+            <h3 style="margin-top:0">Identity verification</h3>
+            <div id="verificationBox"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardbody">
+            <h3 style="margin-top:0">Your diner rating</h3>
+            <div class="notice"><b>★ 4.7</b> from 6 host reviews</div>
+            <div class="list" style="margin-top:10px">
+              <div class="item"><b style="font-size:11px">Host — Priya</b><div class="sub">Friendly guest, communicated clearly and arrived on time.</div></div>
+              <div class="item"><b style="font-size:11px">Host — A. Banerjee</b><div class="sub">Respectful, easy to host and clear about dietary needs.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-host" class="screen page hidden">
+      <div class="content">
+        <h1>Host</h1>
+        <div class="sub">Manage your own hosted experiences and guest requests.</div>
+
+        <div class="mini-grid" style="margin-top:14px">
+          <div class="actiontile" onclick="showPage('hostListings')"><b id="mobileListingCount">1</b><span>Active listings</span></div>
+          <div class="actiontile" onclick="openHostBookingsUpcoming()"><b id="mobileUpcomingCount">1</b><span>Upcoming events</span></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div id="nextHostPhoto" class="photo"></div>
+          <div class="cardbody">
+            <div class="sub">YOUR NEXT HOSTED EXPERIENCE</div>
+            <h3 id="nextHostTitle" style="margin:5px 0 2px">Andhra Home Feast</h3>
+            <div id="nextHostMeta" class="meta"></div>
+            <button class="btn secondary full" style="margin-top:12px" onclick="openHostBookingsUpcoming()">Open Bookings</button>
+          </div>
+        </div>
+
+        <button class="btn primary full" onclick="showPage('createExperience')">Create Experience</button>
+      </div>
+    </div>
+
+    <div id="page-hostListings" class="screen page hidden">
+      <div class="content">
+        <button class="backbtn" onclick="showPage('host')">←</button>
+        <h1 style="margin-top:6px">My Listings</h1>
+        <div id="hostListingsContent" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div id="page-createExperience" class="screen page hidden">
+      <div class="content">
+        <button class="backbtn" onclick="showPage('host')">←</button>
+        <h1 style="margin-top:6px">Create Experience</h1>
+        <div class="card" style="margin-top:14px">
+          <div class="cardbody">
+            <div class="field"><label>Experience title</label><input id="ceTitle" value="Andhra Home Feast"/></div>
+            <div class="field"><label>Cuisine</label><select id="ceCuisine"><option>Andhra</option><option>Bengali</option><option>Italian</option></select></div>
+            <div class="field"><label>Date</label><input id="ceDate" type="date" value="2026-10-10"/></div>
+            <div class="field"><label>Time</label><input id="ceTime" type="time" value="19:30"/></div>
+            <div class="field"><label>Approximate area</label><input id="ceArea" value="HSR, Bengaluru"/></div>
+            <div class="field"><label>Price per guest</label><input id="cePrice" type="number" value="1200"/></div>
+            <div class="field"><label>Group size</label><select id="ceGroup"><option>3–4 guests</option><option selected>5–6 guests</option><option>7–8 guests</option></select></div>
+            <div class="field"><label>Dietary fit</label><select id="ceDiet"><option>Vegetarian-friendly</option><option>Mixed menu</option></select></div>
+            <div class="field"><label>Experience photo</label><input type="file" accept="image/*" onchange="uploadExperiencePhoto(event)"/></div>
+            <div id="uploadPreview" class="uploadbox" style="margin-top:8px">Upload a photo</div>
+            <div class="field"><label>Description</label><textarea id="ceDesc" rows="4">A warm Andhra dinner with family-style dishes, small-group conversation and a relaxed home setting.</textarea></div>
+            <button class="btn primary full" style="margin-top:12px" onclick="publishExperience()">Publish Experience</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-hostBookings" class="screen page hidden">
+      <div class="content">
+        <button class="backbtn" onclick="showPage('host')">←</button>
+        <h1 style="margin-top:6px">Bookings</h1>
+        <div class="tabs">
+          <button id="hostUpcomingTab" class="active" onclick="setHostTab('upcoming')">Upcoming</button>
+          <button id="hostCompletedTab" onclick="setHostTab('completed')">Completed</button>
+        </div>
+        <div id="hostBookingsContent"></div>
+      </div>
+    </div>
+
+    <div id="page-reviewGuest" class="screen page hidden">
+      <div class="content">
+        <button class="backbtn" onclick="openHostBookingsUpcoming()">←</button>
+        <div id="guestReviewContent" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div id="page-help" class="screen page hidden">
+      <div class="content">
+        <h1>Help / SOS</h1>
+        <div class="card" style="margin-top:14px">
+          <div class="cardbody">
+            <div class="notice"><b>Email</b><br>support@tablelore.app</div>
+            <div class="notice" style="margin-top:10px"><b>Phone / SOS</b><br>+91 90000 12345</div>
+            <div class="sub" style="margin-top:12px">For immediate personal safety concerns, contact local emergency services first. TableLore can help with reporting users and platform issues.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav id="bottomNav" class="bottomnav"></nav>
+  </div>
+
+  <div id="requestModal" class="modal">
+    <div class="sheet">
+      <h2>Request a Seat</h2>
+      <div class="field"><label>Short introduction</label><textarea id="reqIntro" rows="3">I enjoy regional food and small-group conversations.</textarea></div>
+      <div class="field"><label>Dietary preference</label><select id="reqDiet"><option>Vegetarian</option><option>No restrictions</option><option>Vegan</option><option>Jain</option></select></div>
+      <div class="field"><label>Allergies</label><div class="notice"><span id="reqAllergies"></span><br><button class="btn secondary" style="margin-top:8px;padding:7px 10px" onclick="editAllergyFromRequest()">Edit in Profile</button></div></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn secondary" style="flex:1" onclick="closeModal('requestModal')">Cancel</button>
+        <button class="btn primary" style="flex:1" onclick="submitRequest()">Send Request</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="verifyModal" class="modal">
+    <div class="sheet">
+      <h2>Verify your identity</h2>
+      <div class="field"><label>Government ID type</label><select><option>Aadhaar</option><option>Passport</option><option>Driving licence</option></select></div>
+      <div class="field"><label>ID number (demo)</label><input value="XXXX-XXXX-1234"/></div>
+      <button class="btn green full" style="margin-top:14px" onclick="completeVerification()">Verify</button>
+    </div>
+  </div>
+
+  <div id="regionModal" class="modal">
+    <div class="sheet">
+      <h2>Choose a region</h2>
+      <div class="mapbox">
+        <button class="maplabel" style="left:12%;top:18%" onclick="setRegion('Indiranagar',this)">Indiranagar</button>
+        <button class="maplabel" style="left:52%;top:35%" onclick="setRegion('Koramangala',this)">Koramangala</button>
+        <button class="maplabel" style="left:33%;top:68%" onclick="setRegion('HSR',this)">HSR</button>
+        <button class="maplabel" style="left:62%;top:72%" onclick="setRegion('Whitefield',this)">Whitefield</button>
+      </div>
+      <button class="btn secondary full" style="margin-top:12px" onclick="clearRegion()">Any region</button>
+      <button class="btn primary full" style="margin-top:8px" onclick="closeModal('regionModal')">Done</button>
+    </div>
+  </div>
+
+  <div id="hostReviewsModal" class="modal">
+    <div class="sheet">
+      <h2>Priya's ratings & reviews</h2>
+      <div id="hostRatingSummary"></div>
+      <div id="hostReviewList" class="list" style="margin-top:12px"></div>
+      <button class="btn secondary full" style="margin-top:12px" onclick="closeModal('hostReviewsModal')">Close</button>
+    </div>
+  </div>
+
+  <div id="completedModal" class="modal">
+    <div class="sheet">
+      <div id="completedDetail"></div>
+      <button class="btn secondary full" style="margin-top:12px" onclick="closeModal('completedModal')">Close</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const state={
+  loginMethod:'email',accepted:false,verified:false,isHost:false,region:'',currentExperience:0,
+  otpSeconds:30, otpInterval:null, loginDestination:'',
+  diningTab:'upcoming',hostTab:'upcoming',hostSubTab:'confirmed',currentGuestId:null,uploadedPhoto:'',
+  profile:{name:'Vartika P.',city:'Bengaluru',diet:'Vegetarian',budget:'Under ₹1,200',allergies:'Peanuts',intro:'Curious about regional food and small-group experiences.'},
+  experiences:[
+    {title:'Andhra Home Feast',cuisine:'Andhra',area:'HSR',group:'5–6 guests',price:1200,date:'Sat, 10 Oct · 7:30 PM',diet:'Vegetarian-friendly',seats:'2 seats left',photo:'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1000&q=85'},
+    {title:'Bengali Sunday Lunch',cuisine:'Bengali',area:'Koramangala',group:'7–8 guests',price:1450,date:'Sun, 11 Oct · 1:00 PM',diet:'Mixed menu',seats:'3 seats left',photo:'https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1000&q=85'},
+    {title:'Pasta & Stories',cuisine:'Italian',area:'Indiranagar',group:'3–4 guests',price:1100,date:'Fri, 9 Oct · 8:00 PM',diet:'Vegetarian-friendly',seats:'1 seat left',photo:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1000&q=85'}
+  ],
+  attendees:[
+    {name:'Rhea M.',meta:'26–30 · Consulting'},
+    {name:'Kunal S.',meta:'28–32 · Designer'},
+    {name:'Aditi P.',meta:'25–29 · Consultant'}
+  ],
+  dinerPending:[],
+  dinerConfirmed:[{title:'Bengali Sunday Lunch',date:'Sun, 11 Oct · 1:00 PM',host:'Aniketa',area:'Koramangala'}],
+  dinerPast:[
+    {title:'Gujarati Home Dinner',date:'12 Sep 2026',host:'Aman',rating:5,review:'Warm host and excellent food.'},
+    {title:'Pasta Table',date:'29 Aug 2026',host:'Elena',rating:4,review:'Lovely meal and good conversation.'}
+  ],
+  hostRatings:[5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,3],
+  hostReviews:[
+    'Excellent host and a very thoughtful experience.','Clear communication and a beautiful home-dining setup.','The food was excellent and the group size felt just right.','Very warm and welcoming.','Great experience; would join again.','Everything matched the listing.','Loved the family-style menu.','Very considerate about dietary preferences.','The host made everyone feel included.','A memorable evening and very well organised.','Good food, relaxed environment and interesting people.','The host explained each dish and its story.','One of the better social dining experiences I have tried.','Really enjoyable and transparent about the format.','Good overall, though dinner started a little late.','Very good food; would have preferred clearer directions.','Nice experience and friendly table.','Food was good, but the room felt a little crowded.'
+  ],
+  hostUpcoming:[{
+    id:1,experience:'Andhra Home Feast',date:'Sat, 10 Oct · 7:30 PM',area:'HSR, Bengaluru',
+    confirmed:[
+      {name:'Kunal S.',diet:'No restrictions',allergies:'None'},
+      {name:'Aditi P.',diet:'Vegan',allergies:'Gluten'}
+    ],
+    pending:[
+      {id:11,name:'Rhea M.',age:'26–30',work:'Product Manager',rating:4.9,reviews:['Respectful guest and very easy to host.','Prompt communication and polite throughout.'],diet:'Vegetarian',allergies:'None',intro:'I love exploring regional cuisines and meeting new people over food.'},
+      {id:12,name:'Rohan K.',age:'31–35',work:'Consultant',rating:4.6,reviews:['Pleasant and easy to coordinate with.','Clear about preferences and on time.'],diet:'No restrictions',allergies:'Shellfish',intro:'I enjoy small group dinners and regional food.'}
+    ],
+    rejected:[{name:'Aman D.',reason:'Group fit did not work for this table.'}]
+  }],
+  hostCompleted:[
+    {id:21,experience:'Bengali Sunday Lunch',date:'21 Sep 2026',rating:'4.8 average',confirmed:[{name:'Meera G.',diet:'Vegetarian',allergies:'None'},{name:'Rohit P.',diet:'No restrictions',allergies:'Peanuts'},{name:'Sana M.',diet:'Pescatarian',allergies:'None'}],rejected:[{name:'Kabir R.',reason:'Group already full.'}]},
+    {id:22,experience:'Pasta & Stories',date:'12 Sep 2026',rating:'4.6 average',confirmed:[{name:'Nisha K.',diet:'Vegetarian',allergies:'None'},{name:'Dev S.',diet:'No restrictions',allergies:'None'}],rejected:[]}
+  ]
+};
+
+function setLoginMethod(m){
+  state.loginMethod=m;
+  document.getElementById('loginEmailTab').classList.toggle('active',m==='email');
+  document.getElementById('loginPhoneTab').classList.toggle('active',m==='phone');
+  document.getElementById('loginEmailWrap').classList.toggle('hidden',m!=='email');
+  document.getElementById('loginPhoneWrap').classList.toggle('hidden',m!=='phone');
+}
+function login(){
+  if(state.loginMethod==='email'){
+    const email=document.getElementById('loginEmail').value.trim();
+    if(!email.includes('@')){alert('Enter a valid email address.');return;}
+    state.loginDestination=email;
+  }else{
+    const phone=document.getElementById('loginPhone').value.replace(/\D/g,'');
+    if(phone.length<8){alert('Enter a valid phone number.');return;}
+    state.loginDestination='+91 '+phone;
+  }
+
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('otpScreen').classList.remove('hidden');
+
+  document.getElementById('otpDestination').textContent =
+    state.loginMethod==='email'
+      ? `We sent a 6-digit code to ${state.loginDestination}.`
+      : `We sent a 6-digit code by SMS to ${state.loginDestination}.`;
+
+  clearOtpInputs();
+  startOtpTimer();
+}
+
+function backToLogin(){
+  stopOtpTimer();
+  document.getElementById('otpScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+function clearOtpInputs(){
+  document.querySelectorAll('.otpDigit').forEach(i=>i.value='');
+  const first=document.querySelector('.otpDigit');
+  if(first) setTimeout(()=>first.focus(),50);
+}
+function moveOtp(el,index){
+  el.value=el.value.replace(/\D/g,'').slice(0,1);
+  const inputs=[...document.querySelectorAll('.otpDigit')];
+  if(el.value && index<inputs.length-1) inputs[index+1].focus();
+}
+function getOtp(){
+  return [...document.querySelectorAll('.otpDigit')].map(i=>i.value).join('');
+}
+function verifyOtp(){
+  if(getOtp()!=='123456'){
+    alert('Incorrect OTP. For this prototype, use 123456.');
+    return;
+  }
+  stopOtpTimer();
+  document.getElementById('otpScreen').classList.add('hidden');
+  document.getElementById('communityScreen').classList.add('show');
+}
+function resendOtp(){
+  clearOtpInputs();
+  startOtpTimer();
+}
+function startOtpTimer(){
+  stopOtpTimer();
+  state.otpSeconds=30;
+  updateOtpTimer();
+  document.getElementById('resendOtpBtn').disabled=true;
+  state.otpInterval=setInterval(()=>{
+    state.otpSeconds--;
+    updateOtpTimer();
+    if(state.otpSeconds<=0){
+      stopOtpTimer();
+      document.getElementById('resendOtpBtn').disabled=false;
+      document.getElementById('otpTimer').textContent='You can resend now';
+    }
+  },1000);
+}
+function stopOtpTimer(){
+  if(state.otpInterval){
+    clearInterval(state.otpInterval);
+    state.otpInterval=null;
+  }
+}
+function updateOtpTimer(){
+  const s=String(state.otpSeconds).padStart(2,'0');
+  document.getElementById('otpTimer').textContent=`00:${s}`;
+}
+
+function acceptTerms(){
+  if(!document.getElementById('termsCheck').checked){alert('Please agree to the community guidelines to continue.');return;}
+  state.accepted=true;
+  document.getElementById('communityScreen').classList.remove('show');
+  document.getElementById('app').classList.remove('hidden');
+  renderAll();
+  showPage('discover');
+}
+function showPage(name){
+  if(!state.accepted){document.getElementById('communityScreen').classList.add('show');return;}
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('page-'+name)?.classList.remove('hidden');
+  renderBottomNav(name);
+  if(name==='discover')renderExperiences();
+  if(name==='dining')renderDining();
+  if(name==='profile')renderProfile();
+  if(name==='host')renderHostHome();
+  if(name==='hostListings')renderHostListings();
+  if(name==='hostBookings')renderHostBookings();
+  if(name==='createExperience')renderUploadPreview();
+  window.scrollTo(0,0);
+}
+function renderBottomNav(active){
+  const nav=document.getElementById('bottomNav');
+  const items=state.isHost
+    ? [
+      ['host','⌂','Host'],
+      ['discover','⌕','Discover'],
+      ['dining','▣','Dining'],
+      ['profile','○','Profile'],
+      ['help','!','Help']
+    ]
+    : [
+      ['discover','⌕','Discover'],
+      ['dining','▣','Dining'],
+      ['profile','○','Profile'],
+      ['help','!','Help']
+    ];
+  nav.innerHTML=items.map(i=>`<button class="${active===i[0]?'active':''}" onclick="showPage('${i[0]}')"><span class="navico">${i[1]}</span>${i[2]}</button>`).join('');
+}
+function renderExperiences(){
+  const c=document.getElementById('fCuisine')?.value||'',g=document.getElementById('fGroup')?.value||'',p=document.getElementById('fPrice')?.value||'';
+  const items=state.experiences.filter(x=>(!c||x.cuisine===c)&&(!g||x.group===g)&&(!state.region||x.area===state.region)&&priceMatch(x.price,p));
+  document.getElementById('experienceList').innerHTML=items.map((x,i)=>`
+    <div class="card">
+      <div class="photo" style="background-image:url('${x.photo}')"><span class="chip">${x.seats}</span></div>
+      <div class="cardbody">
+        <h3 style="margin:0">${x.title}</h3>
+        <div class="meta">${x.cuisine} · ${x.area}<br>${x.date}</div>
+        <div class="tags"><span class="tag">${x.group}</span><span class="tag">${x.diet}</span></div>
+        <div class="price">₹${x.price.toLocaleString('en-IN')} / person</div>
+        <button class="btn secondary full" style="margin-top:11px" onclick="openExperience(${state.experiences.indexOf(x)})">View Experience</button>
+      </div>
+    </div>`).join('')||'<div class="notice">No experiences match these filters.</div>';
+}
+function priceMatch(price,p){
+  if(!p)return true;
+  if(p==='Under ₹1,200')return price<1200;
+  if(p==='₹1,200–₹1,500')return price>=1200&&price<=1500;
+  return price>1500;
+}
+function setRegion(region,el){
+  state.region=region;
+  document.getElementById('regionText').textContent=region;
+  document.querySelectorAll('.maplabel').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  renderExperiences();
+}
+function clearRegion(){
+  state.region='';
+  document.getElementById('regionText').textContent='Region';
+  document.querySelectorAll('.maplabel').forEach(x=>x.classList.remove('active'));
+  renderExperiences();
+}
+function openExperience(i){
+  state.currentExperience=i;
+  const x=state.experiences[i];
+  document.getElementById('expPhoto').style.backgroundImage=`url('${x.photo}')`;
+  document.getElementById('expTitle').textContent=x.title;
+  document.getElementById('expMeta').textContent=`${x.date} · ${x.area}, Bengaluru · ${x.group}`;
+  document.getElementById('expPrice').textContent=`₹${x.price.toLocaleString('en-IN')} per person`;
+  document.getElementById('expDesc').textContent='A warm, small-group home dining experience with a host-led menu and relaxed conversation.';
+  const dishes=x.cuisine==='Italian'?[['Burrata','Starter'],['Handmade pasta','Main'],['Roasted vegetables','Side'],['Tiramisu','Dessert']]
+  :x.cuisine==='Bengali'?[['Aam panna','Drink'],['Shukto','Starter'],['Luchi & alur dom','Main'],['Mishti doi','Dessert']]
+  :[['Welcome drink','Seasonal cooler'],['Pulihora','Tamarind rice'],['Gutti Vankaya','Stuffed brinjal'],['Payasam','Dessert']];
+  document.getElementById('menuGrid').innerHTML=dishes.map(d=>`<div class="dish"><b>${d[0]}</b><span>${d[1]}</span></div>`).join('');
+  document.getElementById('attendeeList').innerHTML=state.attendees.map(a=>`<div class="item rowitem"><div class="avatar">${a.name[0]}</div><div><b>${a.name}</b><div class="sub">${a.meta}</div></div></div>`).join('');
+  showPage('experience');
+}
+function openHostReviews(){
+  const avg=(state.hostRatings.reduce((a,b)=>a+b,0)/state.hostRatings.length).toFixed(1),counts={1:0,2:0,3:0,4:0,5:0};
+  state.hostRatings.forEach(r=>counts[r]++);
+  document.getElementById('hostRatingSummary').innerHTML=`<div class="rating-summary"><div><div class="rating-big">${avg}</div><div class="sub">18 ratings</div></div><div class="distribution">${[5,4,3,2,1].map(n=>`<div class="barrow"><span>${n}</span><div class="bar"><div class="fill" style="width:${counts[n]/18*100}%"></div></div><span>${counts[n]}</span></div>`).join('')}</div></div>`;
+  document.getElementById('hostReviewList').innerHTML=state.hostReviews.map((r,i)=>`<div class="item"><b style="font-size:11px">Guest ${i+1} · ${'★'.repeat(state.hostRatings[i])}</b><div class="sub">${r}</div></div>`).join('');
+  openModal('hostReviewsModal');
+}
+function openRequest(){
+  document.getElementById('reqDiet').value=state.profile.diet;
+  document.getElementById('reqAllergies').textContent=state.profile.allergies||'None added';
+  openModal('requestModal');
+}
+function editAllergyFromRequest(){closeModal('requestModal');showPage('profile')}
+function submitRequest(){
+  const x=state.experiences[state.currentExperience];
+  state.dinerPending.unshift({title:x.title,date:x.date,diet:document.getElementById('reqDiet').value,allergies:state.profile.allergies||'None',status:'Pending'});
+  closeModal('requestModal');
+  state.diningTab='upcoming';
+  showPage('dining');
+}
+function setDiningTab(t){state.diningTab=t;renderDining()}
+function renderDining(){
+  document.getElementById('diningUpcomingTab').classList.toggle('active',state.diningTab==='upcoming');
+  document.getElementById('diningPastTab').classList.toggle('active',state.diningTab==='past');
+  const el=document.getElementById('diningContent');
+  if(state.diningTab==='upcoming'){
+    let h='';
+    state.dinerConfirmed.forEach(b=>h+=`<div class="item"><div class="row"><div class="grow"><b>${b.title}</b><div class="sub">${b.date}<br>${b.area} · Host: ${b.host}</div></div><span class="status ok">Confirmed</span></div></div>`);
+    state.dinerPending.forEach(b=>h+=`<div class="item"><div class="row"><div class="grow"><b>${b.title}</b><div class="sub">${b.date}<br>Diet: ${b.diet} · Allergies: ${b.allergies}</div></div><span class="status pending">Pending</span></div></div>`);
+    el.innerHTML=h||'<div class="notice">No upcoming bookings yet.</div>';
+  }else{
+    el.innerHTML=state.dinerPast.map(b=>`<div class="item"><b>${b.title}</b><div class="sub">${b.date} · Host: ${b.host}</div><div style="font-size:12px;margin-top:6px">${'★'.repeat(b.rating)}</div><div class="sub">“${b.review}”</div></div>`).join('');
+  }
+}
+function renderProfile(){
+  document.getElementById('pName').value=state.profile.name;
+  document.getElementById('pCity').value=state.profile.city;
+  document.getElementById('pDiet').value=state.profile.diet;
+  document.getElementById('pBudget').value=state.profile.budget;
+  document.getElementById('pAllergies').value=state.profile.allergies;
+  document.getElementById('pIntro').value=state.profile.intro;
+  document.getElementById('verifyBadge').innerHTML=state.verified?'<span class="status ok">✓ Identity verified</span>':'<span class="status pending">Verification pending</span>';
+  document.getElementById('hostEnableBox').innerHTML=state.isHost
+    ?'<div class="notice success"><b>Hosting enabled</b><br>Your same verified profile is used for hosting.</div>'
+    :'<div class="notice"><b>Want to host?</b><br>Use this same account to create your own experience.</div><button class="btn primary full" style="margin-top:9px" onclick="becomeHost()">Become a Host</button>';
+  document.getElementById('verificationBox').innerHTML=state.verified
+    ?'<div class="notice success"><b>Verified</b><br>Verification is reused across diner and host activity.</div>'
+    :'<div class="notice warn"><b>Not verified yet</b></div><button class="btn green full" style="margin-top:9px" onclick="openModal(\'verifyModal\')">Start verification</button>';
+}
+function saveProfile(){
+  state.profile.name=document.getElementById('pName').value;
+  state.profile.city=document.getElementById('pCity').value;
+  state.profile.diet=document.getElementById('pDiet').value;
+  state.profile.budget=document.getElementById('pBudget').value;
+  state.profile.allergies=document.getElementById('pAllergies').value;
+  state.profile.intro=document.getElementById('pIntro').value;
+  document.getElementById('profileSaved').textContent='Saved';
+  setTimeout(()=>document.getElementById('profileSaved').textContent='',1400);
+}
+function completeVerification(){state.verified=true;closeModal('verifyModal');renderProfile()}
+function becomeHost(){saveProfile();state.isHost=true;renderBottomNav('host');showPage('host')}
+function renderHostHome(){
+  document.getElementById('mobileListingCount').textContent=state.experiences.length;
+  document.getElementById('mobileUpcomingCount').textContent=state.hostUpcoming.length;
+  const e=state.hostUpcoming[0],x=state.experiences.find(z=>z.title===e?.experience)||state.experiences[0];
+  document.getElementById('nextHostPhoto').style.backgroundImage=`url('${x.photo}')`;
+  document.getElementById('nextHostTitle').textContent=e?.experience||'No upcoming experience';
+  document.getElementById('nextHostMeta').textContent=e?`${e.date} · ${e.area}`:'';
+}
+function renderHostListings(){
+  document.getElementById('hostListingsContent').innerHTML=state.experiences.map((x,i)=>`
+    <div class="card">
+      <div class="photo" style="height:170px;background-image:url('${x.photo}')"></div>
+      <div class="cardbody">
+        <div class="row"><div class="grow"><h3 style="margin:0">${x.title}</h3><div class="meta">${x.area} · ${x.group}<br>₹${x.price.toLocaleString('en-IN')} / person</div></div><span class="status ok">Published</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <button class="btn secondary" onclick="previewListing(${i})">Preview as Diner</button>
+          <button class="btn secondary" onclick="openHostBookingsUpcoming()">Bookings</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function previewListing(i){openExperience(i)}
+function uploadExperiencePhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{state.uploadedPhoto=ev.target.result;renderUploadPreview()};r.readAsDataURL(f);
+}
+function renderUploadPreview(){
+  const box=document.getElementById('uploadPreview');if(!box)return;
+  const src=state.uploadedPhoto||state.experiences[0].photo;
+  box.style.backgroundImage=`url('${src}')`;box.textContent='';
+}
+function publishExperience(){
+  const x={
+    title:document.getElementById('ceTitle').value,cuisine:document.getElementById('ceCuisine').value,
+    area:'HSR',group:document.getElementById('ceGroup').value,price:+document.getElementById('cePrice').value,
+    date:`${document.getElementById('ceDate').value} · ${document.getElementById('ceTime').value}`,
+    diet:document.getElementById('ceDiet').value,seats:'New listing',photo:state.uploadedPhoto||state.experiences[0].photo
+  };
+  state.experiences.unshift(x);
+  state.hostUpcoming.unshift({id:Date.now(),experience:x.title,date:x.date,area:document.getElementById('ceArea').value,confirmed:[],pending:[],rejected:[]});
+  state.uploadedPhoto='';
+  openHostBookingsUpcoming();
+}
+function openHostBookingsUpcoming(){state.hostTab='upcoming';state.hostSubTab='confirmed';showPage('hostBookings')}
+function setHostTab(t){state.hostTab=t;renderHostBookings()}
+function setHostSubTab(t){state.hostSubTab=t;renderHostBookings()}
+function renderHostBookings(){
+  document.getElementById('hostUpcomingTab').classList.toggle('active',state.hostTab==='upcoming');
+  document.getElementById('hostCompletedTab').classList.toggle('active',state.hostTab==='completed');
+  const el=document.getElementById('hostBookingsContent');
+  if(state.hostTab==='upcoming'){
+    el.innerHTML=state.hostUpcoming.map(e=>`
+      <div class="card">
+        <div class="cardbody">
+          <div class="row"><div class="grow"><h3 style="margin:0">${e.experience}</h3><div class="sub">${e.date}<br>${e.area}</div></div><span class="status ok">Upcoming</span></div>
+          <div class="tabs">
+            <button class="${state.hostSubTab==='confirmed'?'active':''}" onclick="setHostSubTab('confirmed')">Confirmed (${e.confirmed.length})</button>
+            <button class="${state.hostSubTab==='pending'?'active':''}" onclick="setHostSubTab('pending')">Pending (${e.pending.length})</button>
+            <button class="${state.hostSubTab==='rejected'?'active':''}" onclick="setHostSubTab('rejected')">Rejected (${e.rejected.length})</button>
+          </div>
+          ${renderHostPeople(e,state.hostSubTab)}
+          ${state.hostSubTab==='confirmed'&&e.confirmed.length?`<div class="section"><h3>Diet & allergy summary</h3>${summaryPeople(e.confirmed)}</div>`:''}
+        </div>
+      </div>`).join('');
+  }else{
+    el.innerHTML=state.hostCompleted.map(e=>`<div class="item" onclick="openCompleted(${e.id})"><div class="row"><div class="grow"><b>${e.experience}</b><div class="sub">${e.date} · ${e.confirmed.length} attended</div></div><span class="status ok">${e.rating}</span></div><div class="sub" style="margin-top:5px">Tap to see attendees and rejected requests.</div></div>`).join('');
+  }
+}
+function renderHostPeople(e,t){
+  if(t==='confirmed')return e.confirmed.length?`<div class="list">${e.confirmed.map(g=>`<div class="item rowitem"><div class="avatar">${g.name[0]}</div><div class="grow"><b>${g.name}</b><div class="sub">Diet: ${g.diet}<br>Allergies: ${g.allergies}</div></div><span class="status ok">Confirmed</span></div>`).join('')}</div>`:'<div class="notice">No confirmed guests yet.</div>';
+  if(t==='pending')return e.pending.length?`<div class="list">${e.pending.map(g=>`<div class="item rowitem"><div class="avatar">${g.name[0]}</div><div class="grow"><b>${g.name}</b><div class="sub">${g.age} · ${g.work}<br>Diet: ${g.diet} · Allergies: ${g.allergies}</div></div><button class="btn secondary" onclick="reviewGuest(${g.id})">Review</button></div>`).join('')}</div>`:'<div class="notice">No pending requests.</div>';
+  return e.rejected.length?`<div class="list">${e.rejected.map(g=>`<div class="item rowitem"><div class="avatar">${g.name[0]}</div><div class="grow"><b>${g.name}</b><div class="sub">${g.reason}</div></div><span class="status bad">Rejected</span></div>`).join('')}</div>`:'<div class="notice">No rejected requests.</div>';
+}
+function summaryPeople(gs){
+  const d={},a={};gs.forEach(g=>{d[g.diet]=(d[g.diet]||0)+1;a[g.allergies]=(a[g.allergies]||0)+1});
+  return `<div class="list">${Object.entries(d).map(([k,v])=>`<div class="item rowitem"><div class="grow"><b>${k}</b></div><b>${v}</b></div>`).join('')}${Object.entries(a).map(([k,v])=>`<div class="item rowitem"><div class="grow"><b>Allergies: ${k}</b></div><b>${v}</b></div>`).join('')}</div>`;
+}
+function reviewGuest(id){
+  let g=null;for(const e of state.hostUpcoming){g=e.pending.find(x=>x.id===id);if(g)break;}
+  if(!g)return;state.currentGuestId=id;
+  document.getElementById('guestReviewContent').innerHTML=`
+    <div class="profilehero">
+      <div class="row"><div class="avatar" style="width:64px;height:64px">${g.name[0]}</div><div><h2 style="margin:0">${g.name}</h2><div class="verify">✓ Verified</div><div class="sub">${g.age} · ${g.work}</div></div></div>
+      <div class="notice" style="margin-top:12px"><b>★ ${g.rating}</b> from host reviews</div>
+    </div>
+    <div class="card" style="margin-top:14px"><div class="cardbody"><h3 style="margin-top:0">Reviews from hosts</h3>${g.reviews.map(r=>`<div class="item"><div class="sub">${r}</div></div>`).join('')}</div></div>
+    <div class="card"><div class="cardbody"><h3 style="margin-top:0">Request details</h3><div class="notice"><b>Why they want to join</b><br>${g.intro}</div><div class="sub" style="margin-top:10px"><b>Diet:</b> ${g.diet}<br><b>Allergies:</b> ${g.allergies}</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn danger" onclick="declineGuest()">Decline</button><button class="btn green" onclick="confirmGuest()">Confirm Guest</button></div>`;
+  showPage('reviewGuest');
+}
+function confirmGuest(){
+  for(const e of state.hostUpcoming){const i=e.pending.findIndex(x=>x.id===state.currentGuestId);if(i>=0){const g=e.pending[i];e.confirmed.push({name:g.name,diet:g.diet,allergies:g.allergies});e.pending.splice(i,1);break}}
+  state.hostSubTab='confirmed';openHostBookingsUpcoming();
+}
+function declineGuest(){
+  for(const e of state.hostUpcoming){const i=e.pending.findIndex(x=>x.id===state.currentGuestId);if(i>=0){const g=e.pending[i];e.rejected.push({name:g.name,reason:'Declined by host after review.'});e.pending.splice(i,1);break}}
+  state.hostTab='upcoming';state.hostSubTab='rejected';showPage('hostBookings');
+}
+function openCompleted(id){
+  const e=state.hostCompleted.find(x=>x.id===id);
+  document.getElementById('completedDetail').innerHTML=`<h2>${e.experience}</h2><div class="sub">${e.date} · ${e.rating}</div><h3>Attended</h3><div class="list">${e.confirmed.map(g=>`<div class="item"><b>${g.name}</b><div class="sub">Diet: ${g.diet} · Allergies: ${g.allergies}</div></div>`).join('')}</div><h3>Rejected requests</h3>${e.rejected.length?`<div class="list">${e.rejected.map(g=>`<div class="item"><b>${g.name}</b><div class="sub">${g.reason}</div></div>`).join('')}</div>`:'<div class="notice">No rejected requests.</div>'}`;
+  openModal('completedModal');
+}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function renderAll(){renderExperiences();renderDining();renderProfile();renderHostHome();renderHostListings();renderHostBookings();renderUploadPreview()}
+</script>
+</body>
+</html>
